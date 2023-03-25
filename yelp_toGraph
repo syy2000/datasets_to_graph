@@ -1,4 +1,4 @@
-// vertex
+# vertex
 import csv
 count_user = 0
 vertex_num = 0
@@ -71,7 +71,7 @@ with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
     
-// edge
+# edge
 edge_num = 0 
 count_publish = 0
 with open('yelp.csv','r') as file, open('e_publish','w') as new_file:
