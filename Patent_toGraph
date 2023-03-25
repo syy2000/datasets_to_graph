@@ -1,0 +1,280 @@
+#vertex
+import csv
+def find_country(country):
+    switcher = {
+        "TN":1,
+        "KE":2,
+        "CO":3,
+        "PL":4,
+        "GP":5,
+        "AR":6,
+        "NZ":7,
+        "VE":8,
+        "PE":9,
+        "GH":10,
+        "PK":11,
+        "BG":12,
+        "PT":13,
+        "CA":14,
+        "PY":15,
+        "BH":16,
+        "CY":17,
+        "GL":18,
+        "ZW":19,
+        "AM":20,
+        "MH":21,
+        "MR":22,
+        "VN":23,
+        "MX":24,
+        "KG":25,
+        "YU":26,
+        "RU":27,
+        "SM":28,
+        "GN":29,
+        "BZ":30,
+        "LK":31,
+        "HU":32,
+        "IS":33,
+        "LI":34,
+        "CI":35,
+        "LV":36,
+        "RO":37,
+        "UZ":38,
+        "EG":39,
+        "AT":40,
+        "ML":41,
+        "AW":42,
+        "HR":43,
+        "ZA":44,
+        "NL":45,
+        "PF":46,
+        "MA":47,
+        "NO":48,
+        "PA":49,
+        "SY":50,
+        "HN":51,
+        "SE":52,
+        "DE":53,
+        "DO":54,
+        "GR":55,
+        "NC":56,
+        "TC":57,
+        "MQ":58,
+        "MU":59,
+        "BY":60,
+        "CN":61,
+        "AL":62,
+        "IQ":63,
+        "ZM":64,
+        "KZ":65,
+        "CS":66,
+        "BR":67,
+        "BB":68,
+        "SD":69,
+        "SN":70,
+        "NF":71,
+        "GF":72,
+        "TD":73,
+        "ET":74,
+        "JM":75,
+        "MY":76,
+        "YE":77,
+        "VC":78,
+        "IE":79,
+        "CM":80,
+        "AN":81,
+        "MC":82,
+        "AZ":83,
+        "VU":84,
+        "BE":85,
+        "LT":86,
+        "CL":87,
+        "MM":88,
+        "AU":89,
+        "PG":90,
+        "AG":91,
+        "SV":92,
+        "NI":93,
+        "FI":94,
+        "KP":95,
+        "IR":96,
+        "GE":97,
+        "SK":98,
+        "KN":99,
+        "LC":100,
+        "CC":101,
+        "CK":102,
+        "AD":103,
+        "EC":104,
+        "LB":105,
+        "IN":106,
+        "PH":107,
+        "SA":108,
+        "CZ":109,
+        "OM":110,
+        "GY":111,
+        "FO":112,
+        "SI":113,
+        "MG":114,
+        "DK":115,
+        "TW":116,
+        "ID":117,
+        "BS":118,
+        "UG":119,
+        "LY":120,
+        "BM":121,
+        "KR":122,
+        "ES":123,
+        "IT":124,
+        "LU":125,
+        "SG":126,
+        "UY":127,
+        "BN":128,
+        "GB":129,
+        "AI":130,
+        "UA":131,
+        "US":132,
+        "IL":133,
+        "CR":134,
+        "DZ":135,
+        "MW":136,
+        "VG":137,
+        "SR":138,
+        "AE":139,
+        "KW":140,
+        "FR":141,
+        "TT":142,
+        "NG":143,
+        "TZ":144,
+        "CU":145,
+        "TH":146,
+        "JP":147,
+        "JO":148,
+        "MO":149,
+        "HT":150,
+        "SZ":151,
+        "EE":152,
+        "KY":153,
+        "LR":154,
+        "HK":155,
+        "CH":156,
+        "TR":157,
+        "BO":158,
+        "SU":159,
+        "CD":160,
+        "MT":161,
+        "GT":162
+    }
+    return switcher.get(country, 0)
+    
+def find_postate(pos):
+    switcher = {
+        "TN":1,
+        "MA":2,
+        "CO":3,
+        "PA":4,
+        "HI":5,
+        "AR":6,
+        "DE":7,
+        "NC":8,
+        "US":9,
+        "IL":10,
+        "VI":11,
+        "GU":12,
+        "NM":13,
+        "CA":14,
+        "MS":15,
+        "GA":16,
+        "AL":17,
+        "MN":18,
+        "SC":19,
+        "OK":20,
+        "WV":21,
+        "AS":22,
+        "UT":23,
+        "VT":24,
+        "NE":25,
+        "WY":26,
+        "NY":27,
+        "LA":28,
+        "OH":29,
+        "MO":30,
+        "KS":31,
+        "SD":32,
+        "IN":33,
+        "WA":34,
+        "PR":35,
+        "RI":36,
+        "AK":37,
+        "CZ":38,
+        "CT":39,
+        "MI":40,
+        "ME":41,
+        "VA":42,
+        "IA":43,
+        "MD":44,
+        "NH":45,
+        "KY":46,
+        "DC":47,
+        "ND":48,
+        "OR":49,
+        "NV":50,
+        "ID":51,
+        "NJ":52,
+        "TX":53,
+        "WI":54,
+        "MT":55,
+        "FL":56,
+        "AZ":57
+    }
+    return switcher.get(pos, 0)
+    
+vertex_num = 0
+with open('patent.csv','r') as file, open('v_patent','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        vertex_id = str(int(row['PATENT']) - 3070800)
+        vertex_label = '1'
+        new_file.write(vertex_id + ' ' + vertex_label + '\n')
+        new_file.write('8' + '\n')
+        gyear = row['GYEAR'] if row['GYEAR']!='' else '0'
+        gdate = row['GDATE'] if row['GDATE']!='' else '0'
+        country = find_country(row['COUNTRY'])
+        postate = find_postate(row['POSTATE'])
+        asscode = row['ASSCODE'] if row['ASSCODE']!='' else '0'
+        nclass = row['NCLASS'] if row['NCLASS']!='' else '0'
+        cat = row['CAT'] if row['CAT']!='' else '0'
+        subcat = row['SUBCAT'] if row['SUBCAT']!='' else '0'
+        new_file.write('1' + ' ' + gyear + '\n')
+        new_file.write('2' + ' ' + gdate + '\n')
+        new_file.write('3' + ' ' + str(country) + '\n')
+        new_file.write('4' + ' ' + str(postate) + '\n')
+        new_file.write('5' + ' ' + asscode + '\n')
+        new_file.write('6' + ' ' + nclass + '\n')
+        new_file.write('7' + ' ' + cat + '\n')
+        new_file.write('8' + ' ' + subcat + '\n')
+        vertex_num += 1
+        
+with open('v_patent','r') as file, open('v_file','w') as f:
+    content = file.readlines()
+    
+    f.write(str(vertex_num) + '\n')
+    f.writelines(content)
+    
+#edge
+edge_num = 0
+with open('cite.csv','r') as file, open('e_cite','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        src_id = str(int(row['CITING']) - 3070800)
+        dst_id = str(int(row['CITED']) - 3070800)
+        label_id = '1'
+        edge_id = str(edge_num + 1)
+        new_file.write(src_id + ' ' + dst_id + ' ' + label_id + ' ' + edge_id + '\n')
+        edge_num += 1
+        
+with open('e_cite','r') as file, open('e_file','w') as f:
+    content = file.readlines()
+    
+    f.write(str(edge_num) + '\n')
+    f.writelines(content)        
