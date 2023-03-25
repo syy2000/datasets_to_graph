@@ -1,4 +1,4 @@
-// vertex
+# vertex
 import csv
 vertex_num = 0
 count_user = 0
@@ -90,8 +90,9 @@ merged_content = content1 + content2 + content3 + content4
 with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
-    
-//edge
+
+
+#edge
 edge_num = 0
 with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_publish','w') as new_file:
     for row in file1:
