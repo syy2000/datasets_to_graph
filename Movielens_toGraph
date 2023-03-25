@@ -1,4 +1,4 @@
-//vertex
+# vertex
 def func(genres):
     switcher = {
         "Action": 1,
@@ -76,7 +76,7 @@ with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
     
-// edge
+# edge
 count_publish = 0
 edge_num = 0
 cur = 1
