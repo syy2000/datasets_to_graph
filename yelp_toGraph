@@ -1,0 +1,108 @@
+// vertex
+import csv
+count_user = 0
+vertex_num = 0
+user_set = set()
+user_id_ = {}
+with open('yelp.csv','r') as file, open('v_user','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        if row['user_id'] == 'user_id':
+            continue
+        if row['user_id'] in user_id_:
+            continue
+        user_id_[row['user_id']] = count_user+1
+        user_set.add(row['user_id'])
+        count_user += 1
+        vertex_num += 1
+    for user_id in user_set:
+        vertex_id = str(user_id_[user_id])
+        vertex_label = '1'
+        new_file.write(vertex_id + ' ' + vertex_label + '\n')
+        new_file.write('0' + '\n')
+        
+count_review = 0
+review_id_ = {}
+
+with open('yelp.csv','r') as file, open('v_review','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        if row['review_id'] == 'review_id':
+            continue
+        review_id_[row['review_id']] = vertex_num + 1
+        vertex_id = str(vertex_num + 1)
+        vertex_label = '2'
+        new_file.write(vertex_id + ' ' + vertex_label + '\n')
+        new_file.write('4' + '\n')
+        new_file.write('1' + ' ' + row['stars'] + '\n')
+        new_file.write('2' + ' ' + row['cool'] + '\n')
+        new_file.write('3' + ' ' + row['useful'] + '\n')
+        new_file.write('4' + ' ' + row['funny'] + '\n')
+        vertex_num += 1
+        count_review += 1
+        
+count_business = 0
+business_set = set()
+business_id_ = {}
+with open('yelp.csv','r') as file, open('v_business','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        if row['business_id'] == 'business_id':
+            continue
+        if row['business_id'] in business_set:
+            continue
+        business_set.add(row['business_id'])
+        business_id_[row['business_id']] = vertex_num + 1
+        count_business += 1
+        vertex_num += 1
+    for business_id in business_id_:
+        vertex_id = str(business_id_[row['business_id']])
+        vertex_label = '3'
+        new_file.write(vertex_id + ' ' + vertex_label + '\n')
+        new_file.write('0' + '\n')
+        
+with open('v_user') as f1,open('v_review') as f2, open('v_business') as f3:
+    content1 = f1.readlines()
+    content2 = f2.readlines()
+    content3 = f3.readlines()
+    
+merged_content = content1 + content2 + content3
+with open('v_file','w') as f:
+    f.write(str(vertex_num) + '\n')
+    f.writelines(merged_content)
+    
+// edge
+edge_num = 0 
+count_publish = 0
+with open('yelp.csv','r') as file, open('e_publish','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        src_id = str(user_id_[row['user_id']])
+        dst_id = str(review_id_[row['review_id']])
+        edge_label = '1'
+        edge_id = str(edge_num + 1)
+        new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
+        edge_num += 1
+        count_publish += 1
+        
+count_belong_to = 0
+with open('yelp.csv','r') as file, open('e_belong_to','w') as new_file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        src_id = str(review_id_[row['review_id']])
+        dst_id = str(business_id_[row['business_id']])
+        edge_label = '2'
+        edge_id = str(edge_num + 1)
+        new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
+        edge_num += 1
+        count_belong_to += 1
+        
+with open('e_publish','r') as f1, open('e_belong_to','r') as f2:
+    content1 = f1.readlines()
+    content2 = f2.readlines()
+    
+merged_content = content1 + content2
+with open('e_file','w') as f:
+    f.write(str(edge_num) + '\n')
+    f.writelines(merged_content)
+        
