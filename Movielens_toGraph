@@ -52,11 +52,13 @@ with open('ratings.txt','r') as file, open('v_rating','w') as file2:
         count_rating += 1
         vertex_num += 1
         
+movieId_vertexId = {}
 count_movie = 0
 with open('movie.txt','r',encoding='UTF-8') as file, open('v_movie','w') as file3:
     for row in file:
         line_list = row.strip().split('::')
-        vertex_id = str(int(line_list[0]) + count_user + count_rating)
+        vertex_id = str(vertex_num + 1)
+        movieId_vertexId[int(line_list[0])] = vertex_id
         vertex_label = '3'
         file3.write(vertex_id + ' ' + vertex_label + '\n')
         file3.write('1' + '\n')
@@ -98,7 +100,7 @@ with open('ratings.txt','r') as file, open('e_belong_to','w') as new_file:
     for row in file:
         line_list = row.strip().split('::')
         src_id = str(cur + count_user)
-        dst_id = str(int(line_list[1]) + count_user + count_rating)
+        dst_id = movieId_vertexId[int(line_list[1])]
         edge_label = '2'
         edge_id = str(edge_num + 1)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
