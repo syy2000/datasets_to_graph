@@ -94,6 +94,7 @@ with open('v_file','w') as f:
 
 #edge
 edge_num = 0
+cur = 1
 with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_publish','w') as new_file:
     for row in file1:
         line_list = row.strip().split(',')
@@ -105,15 +106,16 @@ with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as f
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
     for row in file2:
         line_list = row.strip().split(',')
-        key = count_user + count_movie + count_movie_review
-        src_id = review_user[key+1]
-        dst_id = str(key + 1)
-        key += 1
+        key = cur + count_user + count_movie + count_movie_review
+        src_id = review_user[key]
+        dst_id = str(key)
+        cur += 1
         edge_label = '1'
         edge_id = str(edge_num + 1)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
-        
+   
+ cur = 1
  with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_belong_to','w') as new_file:
     for row in file1:
         line_list = row.strip().split(',')
@@ -125,10 +127,10 @@ with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as f
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
     for row in file2:
         line_list = row.strip().split(',')
-        key = count_user + count_movie + count_movie_review
-        src_id = str(key+1)
-        dst_id = str(review_movieReview[key+1])
-        key+=1
+        key = count_user + count_movie + count_movie_review + cur
+        src_id = str(key)
+        dst_id = str(review_movieReview[key])
+        cur +=1
         edge_label = '2'
         edge_id = str(edge_num+1)
         edge_num += 1
