@@ -58,14 +58,12 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_l3','w') as
 count_leaf = 0
 with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_leaf','w') as new_file:
     reader = csv.DictReader(file)
-    cur = 1
     for row in reader:
         vertex_id = str(cur + vertex_num)
         vertex_label = '4'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('1' + '\n')
         new_file.write('1' + ' ' + row['word_count'] + '\n')
-        cur += 1
         count_leaf += 1
         vertex_num += 1
         
