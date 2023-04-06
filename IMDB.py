@@ -18,8 +18,10 @@
 """
     请先按照以下路径建立文件夹
     ./out/IMDB/kv
+    请将out_node_and_edge_id.py放在同一目录下
 """
 import time
+import out_node_and_edge_id as out_trans
 
 
 def log(s):
@@ -85,6 +87,8 @@ attr_value_vk = {}
 all_value_vk = 0
 # 这里是事后补救的，将attr->int以便输出，很丑陋建议修改
 attr_key_vk = {}
+# 现在又补救了一条，更丑了 (int,attr) 记得排序
+attr_key_k_list = []
 
 node_val_key = {}
 
@@ -158,6 +162,7 @@ def solve_node(file, label):
                     if now_attr[i] not in attr_key_vk:
                         temp = len(attr_key_vk)
                         attr_key_vk[now_attr[i]] = temp
+                        attr_key_k_list.append((temp, now_attr[i]))
                 continue
             attr_value_kv_trans(l, label)
     log(file + " 处理完毕")
@@ -278,18 +283,22 @@ if __name__ == '__main__':
     log("边的数量 " + str(len(edges)))
     log("属性数量 " + str(len(attr_key_vk)))
 
+    attr_key_k_list.sort()
     log("输出 " + out_node_file + " 中...")
     with open(out_node_file, "w+", encoding="utf-8") as f:
         nodes_len = len(nodes)
         f.write(str(nodes_len) + "\n")
 
         for id, node in nodes.items():
-            f.write(str(node.id) + "\t" + str(node.label) + "\n")
+            f.write(out_trans.insert_get_str_id_node(node.id) + "\t" + str(node.label) + "\n")
 
             # attr
             f.write(str(len(node.attr)) + "\n")
-            for k, v in node.attr.items():
-                f.write(str(attr_key_vk[k]) + "\t" + str(v) + "\n")
+            assert len(node.attr) == len(attr_key_k_list)
+            # for k, v in node.attr.items():
+            #     f.write(str(attr_key_vk[k]) + "\t" + str(v) + "\n")
+            for k_id, k in attr_key_k_list:
+                f.write(str(k_id) + "\t" + str(node.attr[k]) + "\n")
     log("输出 " + out_node_file + " 完成")
 
     log("输出 " + out_edge_file + " 中...")
@@ -298,7 +307,10 @@ if __name__ == '__main__':
         f.write(str(edges_len) + "\n")
 
         for i, e in edges.items():
-            f.write(str(e.u) + "\t" + str(e.v) + "\t" + str(e.label) + "\t" + str(i) + "\n")
+            f.write(out_trans.insert_get_str_id_node(e.u) + "\t" +
+                    out_trans.insert_get_str_id_node(e.v) + "\t" +
+                    str(e.label) + "\t" +
+                    out_trans.insert_get_str_id_edge(i) + "\n")
     log("输出 " + out_edge_file + " 完成")
 
     log("输出 " + out_attr_file + " 中...")

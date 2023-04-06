@@ -7,15 +7,17 @@
 """
 """
     node label:
-        0 -> 社交账户
+        1 -> 社交账户
     edge label:
-        0 -> 社交关系
+        1 -> 社交关系
 """
 """
     请先按照以下路径建立文件夹
     ./out/Orkut
+    请将out_node_and_edge_id.py放在同一目录下
 """
 import time
+import out_node_and_edge_id as out_trans
 
 in_edge_file = "./Orkut/com-orkut.ungraph.txt"
 
@@ -55,10 +57,8 @@ def solve(file):
             u = find_and_insert(u)
             v = find_and_insert(v)
             edge_len = len(edges)
-            edges[edge_len] = (u, v, 0)
-            edges[edge_len + 1] = (v, u, 0)
-            if cnt % 10000 == 0:
-                log(str(cnt/10000) + " 万行处理完毕")
+            edges[edge_len] = (u, v, 1)
+            edges[edge_len + 1] = (v, u, 1)
 
 
 if __name__ == '__main__':
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         f.write(str(nodes_len) + "\n")
 
         for v, id in nodes.items():
-            f.write(str(id) + "\t" + "0" + "\n")
+            f.write(out_trans.insert_get_str_id_node(id) + "\t" + "1" + "\n")
             f.write("0" + "\n")
     log("输出 " + out_node_file + "完成")
 
@@ -86,5 +86,8 @@ if __name__ == '__main__':
         f.write(str(edges_len) + "\n")
 
         for id, e in edges.items():
-            f.write(str(e[0]) + "\t" + str(e[1]) + "\t" + str(e[2]) + "\t" + str(id) + "\n")
+            f.write(out_trans.insert_get_str_id_node(e[0]) + "\t"
+                    + out_trans.insert_get_str_id_node(e[1]) + "\t"
+                    + str(e[2]) + "\t"
+                    + out_trans.insert_get_str_id_edge(id) + "\n")
     log("输出 " + out_edge_file + "完成")
