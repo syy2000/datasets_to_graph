@@ -2,8 +2,8 @@
     该图是facebook的社交网络图
     朋友关系是单向的
 
-    node label 0 -> 社交网络账号
-    edge label 0 -> 朋友关系
+    node label 1 -> 社交网络账号
+    edge label 1 -> 朋友关系
 
     null为空或者缺失，这里没有做特殊处理
     \t分隔
@@ -21,13 +21,16 @@
 """
     请先按照以下路径建立文件夹
     ./out/Pokec/kv
+    请将out_node_and_edge_id.py放在同一目录下
 """
 import time
+import out_node_and_edge_id as out_trans
 
 
 def log(s):
     localtime = time.asctime(time.localtime(time.time()))
     print(localtime + "\t" + s)
+
 
 # 如无特殊说明，以下均是完整路径
 in_edge_file = "./Pokec/soc-pokec-relationships.txt"
@@ -169,7 +172,7 @@ if __name__ == '__main__':
         f.write(str(nodes_len) + "\n")
 
         for id, attr_val_k_list in nodes.items():
-            f.write(str(id) + "\t" + "0" + "\n")
+            f.write(out_trans.insert_get_str_id_node(id) + "\t" + "1" + "\n")
 
             # attr
             f.write(str(len(attr_val_k_list)) + "\n")
@@ -183,7 +186,10 @@ if __name__ == '__main__':
 
         for i in range(edges_len):
             e = edges[i]
-            f.write(str(e[0]) + "\t" + str(e[1]) + "\t" + "0" + "\t" + str(i) + "\n")
+            f.write(out_trans.insert_get_str_id_node(e[0]) + "\t"
+                    + out_trans.insert_get_str_id_node(e[1]) + "\t"
+                    + "1" + "\t"
+                    + out_trans.insert_get_str_id_edge(i) + "\n")
 
     log("输出 " + out_attr_file)
     with open(out_attr_file, "w+", encoding="utf-8") as f:
