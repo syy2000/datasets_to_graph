@@ -1,4 +1,3 @@
-# vertex
 import csv
 vertex_num = 0
 count_user = 0
@@ -15,13 +14,12 @@ with open('movie-ratings.txt', 'r') as file1, open('review-ratings.txt','r') as 
     for row in file3:
         line_list = row.strip().split(',')
         unique_user.add(line_list[0])
-
+    
     for value in unique_user:
-        new_file.write(value + ' ' + '1' + "\n")
+        new_file.write(str(int(value)-1) + ' ' + '1' + "\n")
         new_file.write('0' + '\n')
         vertex_num+=1
         count_user+=1
-        
 count_movie = 0
 hash_table_movie = {}
 with open('movie-ratings.txt', 'r') as file, open('v_file_movie', 'w') as new_file:
@@ -34,12 +32,11 @@ with open('movie-ratings.txt', 'r') as file, open('v_file_movie', 'w') as new_fi
         hash_table_movie[key] = value
 
     for movie_id in hash_table_movie.keys():
-        new_file.write(str(movie_id) + ' ' + '2' + "\n")
+        new_file.write(str(movie_id-1) + ' ' + '2' + "\n")
         new_file.write('1' + '\n')
-        new_file.write('1' + ' ' + hash_table_movie[movie_id] + '\n')
+        new_file.write('0' + ' ' + hash_table_movie[movie_id] + '\n')
         vertex_num+=1
         count_movie+=1
-        
 count_movie_review = 0
 hash_table_movie_review = {}
 with open('movie-ratings.txt', 'r') as file, open('v_file_movie_review', 'w') as new_file:
@@ -52,12 +49,11 @@ with open('movie-ratings.txt', 'r') as file, open('v_file_movie_review', 'w') as
         hash_table_movie_review[key] = value
 
     for review_id in hash_table_movie_review.keys():
-        new_file.write(str(review_id) + ' ' + '3' + "\n")
+        new_file.write(str(vertex_num) + ' ' + '3' + "\n")
         new_file.write('1' + '\n')
-        new_file.write('1' + ' ' + hash_table_movie_review[review_id] + '\n')
+        new_file.write('0' + ' ' + hash_table_movie_review[review_id] + '\n')
         vertex_num+=1
         count_movie_review+=1
-        
 count_review_review = 0
 review_movieReview = {}
 review_user = {}
@@ -75,11 +71,11 @@ with open('review-ratings.txt','r') as file, open('v_file_review_review','w') as
         vertex_num+=1
     
     for review_id in review_rating.keys():
-        new_file.write(str(review_id) + ' ' + '4' + '\n')
+        new_file.write(str(review_id-1) + ' ' + '4' + '\n')
         new_file.write('1' + '\n')
-        new_file.write('1' + ' ' + review_rating[review_id] + '\n')
+        new_file.write('0' + ' ' + review_rating[review_id] + '\n')
         count_review_review+=1
-
+#合并
 with open('v_file_user') as f1,open('v_file_movie') as f2, open('v_file_movie_review') as f3,open('v_file_review_review') as f4:
     content1 = f1.readlines()
     content2 = f2.readlines()
@@ -90,62 +86,59 @@ merged_content = content1 + content2 + content3 + content4
 with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
-
-
-#edge
+    
+#处理边
 edge_num = 0
+c = 0
 cur = 1
 with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_publish','w') as new_file:
     for row in file1:
         line_list = row.strip().split(',')
-        src_id = line_list[0]
-        dst_id = str(int(line_list[3]) + count_user + count_movie)
+        src_id = str(int(line_list[0])-1)
+        dst_id = str(int(line_list[3]) + count_user + count_movie - 1)
         edge_label = '1'
-        edge_id = str(edge_num + 1)
+        edge_id = str(edge_num)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
     for row in file2:
         line_list = row.strip().split(',')
         key = cur + count_user + count_movie + count_movie_review
-        src_id = review_user[key]
-        dst_id = str(key)
+        src_id = str(int(review_user[key])-1)
+        dst_id = str(key-1)
         cur += 1
         edge_label = '1'
-        edge_id = str(edge_num + 1)
+        edge_id = str(edge_num)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
-   
- cur = 1
- with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_belong_to','w') as new_file:
+cur = 1
+with open('movie-ratings.txt','r') as file1, open('review-ratings.txt','r') as file2, open('e_belong_to','w') as new_file:
     for row in file1:
         line_list = row.strip().split(',')
-        src_id = str(int(line_list[3]) + count_user + count_movie)
-        dst_id = str(int(line_list[1]) + count_user)
+        src_id = str(int(line_list[3]) + count_user + count_movie - 1)
+        dst_id = str(int(line_list[1]) + count_user - 1)
         edge_label = '2'
-        edge_id = str(edge_num+1)
+        edge_id = str(edge_num)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
     for row in file2:
         line_list = row.strip().split(',')
         key = count_user + count_movie + count_movie_review + cur
-        src_id = str(key)
-        dst_id = str(review_movieReview[key])
+        src_id = str(key - 1)
+        dst_id = str(review_movieReview[key] - 1)
         cur +=1
         edge_label = '2'
-        edge_id = str(edge_num+1)
+        edge_id = str(edge_num)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
-        
 with open('trusts.txt','r') as file, open('e_trust','w') as new_file:
     for row in file:
         line_list = row.strip().split(',')
-        src_id = line_list[0]
-        dst_id = line_list[1]
+        src_id = str(int(line_list[0]) - 1)
+        dst_id = str(int(line_list[1]) - 1)
         edge_label = '3'
-        edge_id = str(edge_num+1)
+        edge_id = str(edge_num)
         edge_num += 1
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
-        
 with open('e_publish') as f1,open('e_belong_to') as f2, open('e_trust') as f3:
     content1 = f1.readlines()
     content2 = f2.readlines()
