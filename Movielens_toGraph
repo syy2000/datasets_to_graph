@@ -1,4 +1,4 @@
-# vertex
+#题材映射函数
 def func(genres):
     switcher = {
         "Action": 1,
@@ -21,53 +21,48 @@ def func(genres):
         "Western":18
     }
     return str(switcher.get(genres, 19))
-    
-    
 vertex_num = 0
 count_user = 0
 with open('users.txt','r') as file, open('v_user','w') as file1:
     for row in file:
         line_list = row.strip().split('::')
-        vertex_id = line_list[0]
+        vertex_id = str(int(line_list[0])-1)
         vertex_label = '1'
         file1.write(vertex_id + ' ' + vertex_label + '\n')
         file1.write('3' + '\n')
         gender='1' if line_list[1]=='M' else '2'
-        file1.write('1' + ' ' + gender + '\n')
-        file1.write('2' + ' ' + line_list[2] + '\n')
-        file1.write('3' + ' ' + line_list[3] + '\n')
+        file1.write('0' + ' ' + gender + '\n')
+        file1.write('1' + ' ' + line_list[2] + '\n')
+        file1.write('2' + ' ' + line_list[3] + '\n')
         count_user += 1
         vertex_num += 1
-        
 count_rating = 0
 with open('ratings.txt','r') as file, open('v_rating','w') as file2:
     for row in file:
         line_list = row.strip().split('::')
-        vertex_id = str(vertex_num + 1)
+        vertex_id = str(vertex_num)
         vertex_label = '2'
         file2.write(vertex_id + ' ' + vertex_label + '\n')
         file2.write('2' + '\n')
-        file2.write('1' + ' ' + line_list[2] + '\n')
-        file2.write('2' + ' ' + line_list[3] + '\n')
+        file2.write('0' + ' ' + line_list[2] + '\n')
+        file2.write('1' + ' ' + line_list[3] + '\n')
         count_rating += 1
         vertex_num += 1
-        
 movieId_vertexId = {}
 count_movie = 0
 with open('movie.txt','r',encoding='UTF-8') as file, open('v_movie','w') as file3:
     for row in file:
         line_list = row.strip().split('::')
-        vertex_id = str(vertex_num + 1)
+        vertex_id = str(vertex_num)
         movieId_vertexId[int(line_list[0])] = vertex_id
         vertex_label = '3'
         file3.write(vertex_id + ' ' + vertex_label + '\n')
         file3.write('1' + '\n')
         genres = line_list[2].strip().split('|')[0]
         movie_genres = func(genres)
-        file3.write('1' + ' ' + movie_genres + '\n')
+        file3.write('0' + ' ' + movie_genres + '\n')
         count_movie += 1
         vertex_num += 1
-        
 with open('v_user') as f1,open('v_rating') as f2, open('v_movie') as f3:
     content1 = f1.readlines()
     content2 = f2.readlines()
@@ -77,37 +72,33 @@ merged_content = content1 + content2 + content3
 with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
-    
-# edge
 count_publish = 0
 edge_num = 0
 cur = 1
 with open('ratings.txt','r') as file, open('e_publish','w') as new_file:
     for row in file:
         line_list = row.strip().split('::')
-        src_id = line_list[0]
-        dst_id = str(cur + count_user)
+        src_id = str(int(line_list[0])-1)
+        dst_id = str(cur + count_user - 1)
         edge_label = '1'
-        edge_id = str(edge_num + 1)
+        edge_id = str(edge_num)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
         cur += 1
         edge_num += 1
         count_publish += 1
-        
-count_belong_to = 0
+       count_belong_to = 0
 cur = 1
 with open('ratings.txt','r') as file, open('e_belong_to','w') as new_file:
     for row in file:
         line_list = row.strip().split('::')
-        src_id = str(cur + count_user)
-        dst_id = movieId_vertexId[int(line_list[1])]
+        src_id = str(cur + count_user - 1)
+        dst_id = str(int(movieId_vertexId[int(line_list[1])])-1)
         edge_label = '2'
-        edge_id = str(edge_num + 1)
+        edge_id = str(edge_num)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
         cur += 1
         edge_num += 1
         count_belong_to += 1
-        
 with open('e_publish','r') as f1, open('e_belong_to','r') as f2:
     content1 = f1.readlines()
     content2 = f2.readlines()
