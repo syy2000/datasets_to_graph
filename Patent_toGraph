@@ -1,5 +1,5 @@
-#vertex
 import csv
+#国家属性映射
 def find_country(country):
     switcher = {
         "TN":1,
@@ -166,8 +166,8 @@ def find_country(country):
         "GT":162
     }
     return switcher.get(country, 0)
-    
-def find_postate(pos):
+    #邮政编码映射
+    def find_postate(pos):
     switcher = {
         "TN":1,
         "MA":2,
@@ -175,7 +175,7 @@ def find_postate(pos):
         "PA":4,
         "HI":5,
         "AR":6,
-        "DE":7,
+        "DE":7, 
         "NC":8,
         "US":9,
         "IL":10,
@@ -228,12 +228,18 @@ def find_postate(pos):
         "AZ":57
     }
     return switcher.get(pos, 0)
-    
+    #vertex
+    vertex_set = set()
+patent_vertex_id = {}
 vertex_num = 0
-with open('patent.csv','r') as file, open('v_patent','w') as new_file:
-    reader = csv.DictReader(file)
+with open('patent.csv','r') as file1, open('cite.csv', 'r') as file2, open('v_patent','w') as new_file:
+    reader = csv.DictReader(file1)
     for row in reader:
-        vertex_id = str(int(row['PATENT']) - 3070800)
+        if row['PATENT'] in vertex_set:
+            continue
+        vertex_set.add(row['PATENT'])
+        vertex_id = str(vertex_num)
+        patent_vertex_id[int(row['PATENT'])] = vertex_num + 1
         vertex_label = '1'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('8' + '\n')
@@ -245,34 +251,82 @@ with open('patent.csv','r') as file, open('v_patent','w') as new_file:
         nclass = row['NCLASS'] if row['NCLASS']!='' else '0'
         cat = row['CAT'] if row['CAT']!='' else '0'
         subcat = row['SUBCAT'] if row['SUBCAT']!='' else '0'
-        new_file.write('1' + ' ' + gyear + '\n')
-        new_file.write('2' + ' ' + gdate + '\n')
-        new_file.write('3' + ' ' + str(country) + '\n')
-        new_file.write('4' + ' ' + str(postate) + '\n')
-        new_file.write('5' + ' ' + asscode + '\n')
-        new_file.write('6' + ' ' + nclass + '\n')
-        new_file.write('7' + ' ' + cat + '\n')
-        new_file.write('8' + ' ' + subcat + '\n')
+        new_file.write('0' + ' ' + gyear + '\n')
+        new_file.write('1' + ' ' + gdate + '\n')
+        new_file.write('2' + ' ' + str(country) + '\n')
+        new_file.write('3' + ' ' + str(postate) + '\n')
+        new_file.write('4' + ' ' + asscode + '\n')
+        new_file.write('5' + ' ' + nclass + '\n')
+        new_file.write('6' + ' ' + cat + '\n')
+        new_file.write('7' + ' ' + subcat + '\n')
         vertex_num += 1
         
-with open('v_patent','r') as file, open('v_file','w') as f:
+    reader = csv.DictReader(file2)
+    for row in reader:
+        if row['CITED'] not in vertex_set:
+            vertex_set.add(row['CITED'])
+            vertex_id = str(vertex_num)
+            patent_vertex_id[int(row['CITED'])] = vertex_num + 1
+            vertex_label = '1'
+            new_file.write(vertex_id + ' ' + vertex_label + '\n')
+            new_file.write('8' + '\n')
+            gyear = '0'
+            gdate = '0'
+            country = '0'
+            postate = '0'
+            asscode = '0'
+            nclass = '0'
+            cat = '0'
+            subcat = '0'
+            new_file.write('0' + ' ' + gyear + '\n')
+            new_file.write('1' + ' ' + gdate + '\n')
+            new_file.write('2' + ' ' + str(country) + '\n')
+            new_file.write('3' + ' ' + str(postate) + '\n')
+            new_file.write('4' + ' ' + asscode + '\n')
+            new_file.write('5' + ' ' + nclass + '\n')
+            new_file.write('6' + ' ' + cat + '\n')
+            new_file.write('7' + ' ' + subcat + '\n')
+            vertex_num += 1
+        if row['CITING'] not in vertex_set:
+            vertex_set.add(row['CITING'])
+            vertex_id = str(vertex_num)
+            patent_vertex_id[int(row['CITING'])] = vertex_num + 1
+            vertex_label = '1'
+            new_file.write(vertex_id + ' ' + vertex_label + '\n')
+            new_file.write('8' + '\n')
+            gyear = '0'
+            gdate = '0'
+            country = '0'
+            postate = '0'
+            asscode = '0'
+            nclass = '0'
+            cat = '0'
+            subcat = '0'
+            new_file.write('0' + ' ' + gyear + '\n')
+            new_file.write('1' + ' ' + gdate + '\n')
+            new_file.write('2' + ' ' + str(country) + '\n')
+            new_file.write('3' + ' ' + str(postate) + '\n')
+            new_file.write('4' + ' ' + asscode + '\n')
+            new_file.write('5' + ' ' + nclass + '\n')
+            new_file.write('6' + ' ' + cat + '\n')
+            new_file.write('7' + ' ' + subcat + '\n')
+            vertex_num += 1
+   with open('v_patent','r') as file, open('v_file','w') as f:
     content = file.readlines()
     
     f.write(str(vertex_num) + '\n')
     f.writelines(content)
-    
 #edge
 edge_num = 0
 with open('cite.csv','r') as file, open('e_cite','w') as new_file:
     reader = csv.DictReader(file)
     for row in reader:
-        src_id = str(int(row['CITING']) - 3070800)
-        dst_id = str(int(row['CITED']) - 3070800)
+        src_id = str(patent_vertex_id[int(row['CITING'])] - 1)
+        dst_id = str(patent_vertex_id[int(row['CITED'])] - 1)
         label_id = '1'
-        edge_id = str(edge_num + 1)
+        edge_id = str(edge_num)
         new_file.write(src_id + ' ' + dst_id + ' ' + label_id + ' ' + edge_id + '\n')
         edge_num += 1
-        
 with open('e_cite','r') as file, open('e_file','w') as f:
     content = file.readlines()
     
