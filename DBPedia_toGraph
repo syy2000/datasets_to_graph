@@ -1,5 +1,4 @@
 import csv
-#vertex
 vertex_num = 0
 count_l1 = 0
 l1_set = set()
@@ -14,11 +13,10 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_l1','w') as
         vertex_num += 1
         count_l1 += 1
     for l1 in l1_set:
-        vertex_id = l1_name_id[l1]
+        vertex_id = str(int(l1_name_id[l1])-1)
         vertex_label = '1'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('0' + '\n')
-        
 count_l2 = 0
 l2_set = set()
 l2_name_id = {}
@@ -32,11 +30,10 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_l2','w') as
         vertex_num += 1
         count_l2 += 1
     for l2 in l2_set:
-        vertex_id = l2_name_id[l2]
+        vertex_id = str(int(l2_name_id[l2])-1)
         vertex_label = '2'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('0' + '\n')
-        
 count_l3 = 0
 l3_set = set()
 l3_name_id = {}
@@ -50,24 +47,22 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_l3','w') as
         vertex_num += 1
         count_l3 += 1
     for l3 in l3_set:
-        vertex_id = l3_name_id[l3]
+        vertex_id = str(int(l3_name_id[l3])-1)
         vertex_label = '3'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('0' + '\n')
-        
 count_leaf = 0
 with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('v_leaf','w') as new_file:
     reader = csv.DictReader(file)
     for row in reader:
-        vertex_id = str(cur + vertex_num)
+        vertex_id = str(vertex_num)
         vertex_label = '4'
         new_file.write(vertex_id + ' ' + vertex_label + '\n')
         new_file.write('1' + '\n')
-        new_file.write('1' + ' ' + row['word_count'] + '\n')
+        new_file.write('0' + ' ' + row['word_count'] + '\n')
         count_leaf += 1
         vertex_num += 1
-        
-with open('v_l1','r') as f1, open('v_l2','r') as f2,open('v_l3','r') as f3, open('v_leaf','r') as f4:
+ with open('v_l1','r') as f1, open('v_l2','r') as f2,open('v_l3','r') as f3, open('v_leaf','r') as f4:
     content1 = f1.readlines()
     content2 = f2.readlines()
     content3 = f3.readlines()
@@ -77,7 +72,7 @@ merged_content = content1 + content2 + content3 + content4
 with open('v_file','w') as f:
     f.write(str(vertex_num) + '\n')
     f.writelines(merged_content)
-    
+
 #edge
 count_edge = 0
 count_sub_class = 0
@@ -93,15 +88,14 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('e_l1_l2','w')
         l2_set_.add(row['l2'])
         l2_l1[l2_name_id[row['l2']]] = l1_name_id[row['l1']]
     for l2 in l2_set_:
-        src_id = l2_name_id[l2]
-        dst_id = l2_l1[src_id]
+        src_id = str(int(l2_name_id[l2]) - 1)
+        dst_id = str(int(l2_l1[l2_name_id[l2]]) - 1)
         edge_label = '1'
-        edge_id = str(count_edge + 1)
+        edge_id = str(count_edge)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
         count_edge += 1
         count_sub_class += 1
         count_l1_l2 += 1
-        
 count_l2_l3 = 0
 l3_set_ = set()
 l3_l2 = {}
@@ -113,31 +107,29 @@ with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('e_l2_l3','w')
         l3_set_.add(row['l3'])
         l3_l2[l3_name_id[row['l3']]] = l2_name_id[row['l2']]
     for l3 in l3_set_:
-        src_id = l3_name_id[l3]
-        dst_id = l3_l2[src_id]
+        src_id = str(int(l3_name_id[l3]) - 1)
+        dst_id = str(int(l3_l2[l3_name_id[l3]]) - 1)
         edge_label = '1'
-        edge_id = str(count_edge + 1)
+        edge_id = str(count_edge)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
         count_edge += 1
         count_sub_class += 1
         count_l2_l3 += 1
-        
 count_l3_leaf = 0
 count_belong_to = 0
 with open('DBP_wiki_data.csv','r',encoding='UTF-8') as file, open('e_l3_leaf','w') as new_file:
     reader = csv.DictReader(file)
-    cur = 1
+    cur = 0
     for row in reader:
         src_id = str(cur + count_l1 + count_l2 + count_l3)
-        dst_id = l3_name_id[row['l3']]
+        dst_id = str(int(l3_name_id[row['l3']]) - 1)
         edge_label = '2'
-        edge_id = str(count_edge + 1)
+        edge_id = str(count_edge)
         new_file.write(src_id + ' ' + dst_id + ' ' + edge_label + ' ' + edge_id + '\n')
         cur += 1
         count_l3_leaf += 1
         count_edge += 1
         count_belong_to += 1
-        
 with open('e_l1_l2','r') as f1, open('e_l2_l3','r') as f2, open('e_l3_leaf','r') as f3:
     content1 = f1.readlines()
     content2 = f2.readlines()
